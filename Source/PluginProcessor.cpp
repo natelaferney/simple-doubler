@@ -176,7 +176,7 @@ bool SimpleDoublerAudioProcessor::hasEditor() const
 
 AudioProcessorEditor* SimpleDoublerAudioProcessor::createEditor()
 {
-    return new SimpleDoublerAudioProcessorEditor (*this);
+    return new SimpleDoublerAudioProcessorEditor (*this, parameters);
 }
 
 //==============================================================================
