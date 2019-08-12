@@ -10,6 +10,9 @@ public:
 	float read();
 	void write(float val);
 	void reset();
+	void resize(int newSize);
+	const int getSampleRate();
+	const int getBufferSize();
 	~CircularBuffer();
 
 private:

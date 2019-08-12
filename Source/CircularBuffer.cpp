@@ -13,6 +13,15 @@ CircularBuffer::~CircularBuffer()
 {
 }
 
+void CircularBuffer::resize(int newSize)
+{
+	buffer.clear();
+	buffer.resize(newSize, 0.0f);
+	bufferSize = newSize;
+	writePosition = 0;
+	readPosition = (writePosition - offset) % bufferSize;
+}
+
 void CircularBuffer::setSampleRate(int newSampleRate)
 {
 	sampleRate = newSampleRate;
@@ -43,4 +52,14 @@ void CircularBuffer::reset()
 	writePosition = 0;
 	offset = 1;
 	readPosition = (writePosition - offset) % bufferSize;
+}
+
+const int CircularBuffer::getSampleRate()
+{
+	return sampleRate;
+}
+
+const int CircularBuffer::getBufferSize()
+{
+	return bufferSize;
 }

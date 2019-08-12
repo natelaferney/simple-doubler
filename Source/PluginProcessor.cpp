@@ -33,8 +33,16 @@ SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor()
 			std::make_unique<AudioParameterFloat>("d1RightGain", "Doubler 1 Right Gain", NormalisableRange<float>(-30.0f, 6.0f, 0.1f), -3.0f),
 			std::make_unique<AudioParameterFloat>("d1RightPan", "Doubler 1 Right Pan", NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f),
 			std::make_unique<AudioParameterFloat>("d1RightDelay", "Doulber 1 Right Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f)
-		})
+		}),
+	d1LeftBuffer(44100), d1RightBuffer(44100)
 {
+	//parameters
+	d1LeftGain = parameters.getRawParameterValue("d1LeftGain");
+	d1RightGain = parameters.getRawParameterValue("d1RightGain");
+	d1LeftPan = parameters.getRawParameterValue("d1LeftPan");
+	d1RightPan = parameters.getRawParameterValue("d1RightPan");
+	d1LeftDelay = parameters.getRawParameterValue("d1LeftDelay");
+	d1RightDelay = parameters.getRawParameterValue("d1RightDelay");
 }
 
 SimpleDoublerAudioProcessor::~SimpleDoublerAudioProcessor()
@@ -106,8 +114,19 @@ void SimpleDoublerAudioProcessor::changeProgramName (int index, const String& ne
 //==============================================================================
 void SimpleDoublerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // Use this method as the place to do any pre-playback
-    // initialisation that you need..
+	d1LeftBuffer.reset();
+	d1RightBuffer.reset();
+	int currentSampleRate = (int)(sampleRate + .5);
+	if (currentSampleRate != d1LeftBuffer.getSampleRate())
+	{
+		d1LeftBuffer.setSampleRate(currentSampleRate);
+		d1LeftBuffer.resize(currentSampleRate);
+	}
+	if (currentSampleRate != d1RightBuffer.getSampleRate())
+	{
+		d1RightBuffer.setSampleRate(currentSampleRate);
+		d1RightBuffer.resize(currentSampleRate);
+	}
 }
 
 void SimpleDoublerAudioProcessor::releaseResources()

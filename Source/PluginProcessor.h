@@ -11,6 +11,7 @@
 #pragma once
 
 #include "../JuceLibraryCode/JuceHeader.h"
+#include "CircularBuffer.h"
 
 //==============================================================================
 /**
@@ -58,5 +59,13 @@ public:
 private:
     //==============================================================================
 	AudioProcessorValueTreeState parameters;
+	CircularBuffer d1LeftBuffer;
+	CircularBuffer d1RightBuffer;
+	float * d1LeftGain;
+	float * d1RightGain;
+	float * d1LeftPan;
+	float * d1RightPan;
+	float * d1LeftDelay;
+	float * d1RightDelay;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDoublerAudioProcessor)
 };

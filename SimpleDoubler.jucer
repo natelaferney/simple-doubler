@@ -5,6 +5,10 @@
               aaxIdentifier="com.NateOnTheBeat.SimpleDoubler">
   <MAINGROUP id="nuUzMZ" name="SimpleDoubler">
     <GROUP id="{46F71159-D09A-AD45-14CA-EF627315F70F}" name="Source">
+      <FILE id="h5uFT1" name="CircularBuffer.cpp" compile="1" resource="0"
+            file="Source/CircularBuffer.cpp"/>
+      <FILE id="oxmNG8" name="CircularBuffer.h" compile="0" resource="0"
+            file="Source/CircularBuffer.h"/>
       <FILE id="artd6Q" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="CEyFSz" name="PluginProcessor.h" compile="0" resource="0"
