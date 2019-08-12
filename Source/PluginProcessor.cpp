@@ -37,6 +37,8 @@ SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor()
 	d1LeftBuffer(44100), d1RightBuffer(44100)
 {
 	//parameters
+	d1LeftToggle = parameters.getRawParameterValue("d1LeftActive");
+	d1RightToggle = parameters.getRawParameterValue("d1RightActive");
 	d1LeftGain = parameters.getRawParameterValue("d1LeftGain");
 	d1RightGain = parameters.getRawParameterValue("d1RightGain");
 	d1LeftPan = parameters.getRawParameterValue("d1LeftPan");
@@ -173,18 +175,6 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
 
-    // This is the place where you'd normally do the guts of your plugin's
-    // audio processing...
-    // Make sure to reset the state if your inner loop is processing
-    // the samples and the outer loop is handling the channels.
-    // Alternatively, you can process the samples with the channels
-    // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
-    }
 }
 
 //==============================================================================
@@ -201,15 +191,61 @@ AudioProcessorEditor* SimpleDoublerAudioProcessor::createEditor()
 //==============================================================================
 void SimpleDoublerAudioProcessor::getStateInformation (MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+	XmlElement * xml = new XmlElement("SimpleDoublerPreset");
+	xml->setAttribute(Identifier("d1LeftToggle"), (double)parameters.getParameter("d1LeftActive")->convertTo0to1(*d1LeftToggle));
+	xml->setAttribute(Identifier("d1RightToggle"), (double)parameters.getParameter("d1RightActive")->convertTo0to1(*d1RightToggle));
+	xml->setAttribute(Identifier("d1LeftGain"), (double)parameters.getParameter("d1LeftGain")->convertTo0to1(*d1LeftGain));
+	xml->setAttribute(Identifier("d1RightGain"), (double)parameters.getParameter("d1RightGain")->convertTo0to1(*d1RightGain));
+	xml->setAttribute(Identifier("d1LeftPan"), (double)parameters.getParameter("d1LeftPan")->convertTo0to1(*d1LeftPan));
+	xml->setAttribute(Identifier("d1RightPan"), (double)parameters.getParameter("d1RightPan")->convertTo0to1(*d1RightPan));
+	xml->setAttribute(Identifier("d1LeftDelay"), (double)parameters.getParameter("d1LeftDelay")->convertTo0to1(*d1LeftDelay));
+	xml->setAttribute(Identifier("d1RightDelay"), (double)parameters.getParameter("d1RightDelay")->convertTo0to1(*d1RightDelay));
+	copyXmlToBinary(*xml, destData);
+	delete xml;
 }
 
 void SimpleDoublerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+	XmlElement * xmlState = getXmlFromBinary(data, sizeInBytes);
+	if (xmlState != nullptr)
+	{
+		const float d1LeftToggleValue = (float)xmlState->getDoubleAttribute("d1LeftToggle", 1.0f);
+		const float d1RightToggleValue = (float)xmlState->getDoubleAttribute("d1RightToggle", 1.0f);
+		const float d1LeftGainValue = (float)xmlState->getDoubleAttribute("d1LeftGain", 0.0f);
+		const float d1RightGainValue = (float)xmlState->getDoubleAttribute("d1RightGain", 0.0f);
+		const float d1LeftPanValue = (float)xmlState->getDoubleAttribute("d1LeftPan", 0.0f);
+		const float d1RightPanValue = (float)xmlState->getDoubleAttribute("d1RightPan", 0.0f);
+		const float d1LeftDelayValue = (float)xmlState->getDoubleAttribute("d1LeftDelay", 0.0f);
+		const float d1RightDelayValue = (float)xmlState->getDoubleAttribute("d1RightDelay", 0.0f);
+
+		parameters.getParameter("d1LeftActive")->beginChangeGesture();
+		parameters.getParameter("d1RightActive")->beginChangeGesture();
+		parameters.getParameter("d1LeftGain")->beginChangeGesture();
+		parameters.getParameter("d1RightGain")->beginChangeGesture();
+		parameters.getParameter("d1LeftPan")->beginChangeGesture();
+		parameters.getParameter("d1RightPan")->beginChangeGesture();
+		parameters.getParameter("d1LeftDelay")->beginChangeGesture();
+		parameters.getParameter("d1RightDelay")->beginChangeGesture();
+
+		parameters.getParameter("d1LeftActive")->setValueNotifyingHost(d1LeftToggleValue);
+		parameters.getParameter("d1RightActive")->setValueNotifyingHost(d1RightToggleValue);
+		parameters.getParameter("d1LeftGain")->setValueNotifyingHost(d1LeftGainValue);
+		parameters.getParameter("d1RightGain")->setValueNotifyingHost(d1RightGainValue);
+		parameters.getParameter("d1LeftPan")->setValueNotifyingHost(d1LeftPanValue);
+		parameters.getParameter("d1RightPan")->setValueNotifyingHost(d1RightPanValue);
+		parameters.getParameter("d1LeftDelay")->setValueNotifyingHost(d1LeftDelayValue);
+		parameters.getParameter("d1RightDelay")->setValueNotifyingHost(d1RightDelayValue);
+
+		parameters.getParameter("d1LeftActive")->endChangeGesture();
+		parameters.getParameter("d1RightActive")->endChangeGesture();
+		parameters.getParameter("d1LeftGain")->endChangeGesture();
+		parameters.getParameter("d1RightGain")->endChangeGesture();
+		parameters.getParameter("d1LeftPan")->endChangeGesture();
+		parameters.getParameter("d1RightPan")->endChangeGesture();
+		parameters.getParameter("d1LeftDelay")->endChangeGesture();
+		parameters.getParameter("d1RightDelay")->endChangeGesture();
+	}
+	delete xmlState;
 }
 
 //==============================================================================

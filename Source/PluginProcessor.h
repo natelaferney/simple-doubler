@@ -61,6 +61,8 @@ private:
 	AudioProcessorValueTreeState parameters;
 	CircularBuffer d1LeftBuffer;
 	CircularBuffer d1RightBuffer;
+	float * d1LeftToggle;
+	float * d1RightToggle;
 	float * d1LeftGain;
 	float * d1RightGain;
 	float * d1LeftPan;
