@@ -79,7 +79,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1LeftDelaySlider->setBounds(300, 50, 100, 100);
 	d1LeftDelaySlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1LeftDelaySlider->setTextValueSuffix(" mS");
-	d1LeftPanningSliderAttachment.reset(new SliderAttachment(valueTreeState, "d1LeftDelay", *d1LeftDelaySlider));
+	d1LeftDelaySliderAttachment.reset(new SliderAttachment(valueTreeState, "d1LeftDelay", *d1LeftDelaySlider));
 
 	//d1 toggle right button
 	addAndMakeVisible(d1RightToggleButton = new TextButton());
@@ -123,8 +123,6 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1RightDelaySlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1RightDelaySlider->setTextValueSuffix(" mS");
 	d1RightDelaySliderAttachment.reset(new SliderAttachment(valueTreeState, "d1RightDelay", *d1RightDelaySlider));
-	
-
 }
 
 SimpleDoublerAudioProcessorEditor::~SimpleDoublerAudioProcessorEditor()
@@ -145,6 +143,11 @@ void SimpleDoublerAudioProcessorEditor::resized()
 }
 
 void SimpleDoublerAudioProcessorEditor::buttonClicked(Button * button)
+{
+
+}
+
+void SimpleDoublerAudioProcessorEditor::sliderValueChanged(Slider * slider)
 {
 
 }

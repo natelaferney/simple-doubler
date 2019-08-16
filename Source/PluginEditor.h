@@ -18,7 +18,7 @@ typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
 //==============================================================================
 /**
 */
-class SimpleDoublerAudioProcessorEditor  : public AudioProcessorEditor
+class SimpleDoublerAudioProcessorEditor : public AudioProcessorEditor, public Slider::Listener, public Button::Listener
 {
 public:
     SimpleDoublerAudioProcessorEditor (SimpleDoublerAudioProcessor& p, AudioProcessorValueTreeState& vts);
@@ -28,6 +28,7 @@ public:
     void paint (Graphics&) override;
     void resized() override;
 	void buttonClicked(Button * button);
+	void sliderValueChanged(Slider * slider) override;
 
 private:
     // This reference is provided as a quick way for your editor to
