@@ -10,11 +10,14 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "../JuceLibraryCode/JuceHeader.h"
+
+static const float pi = MathConstants<float>::pi;
 
 //==============================================================================
-SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor()
+SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor() :
 #ifndef JucePlugin_PreferredChannelConfigurations
-     : AudioProcessor (BusesProperties()
+      AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
                        .withInput  ("Input",  AudioChannelSet::stereo(), true)
@@ -165,6 +168,22 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
     ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+	const int bufferSize = buffer.getNumSamples();
+	float tempLeft;
+	float tempRight;
+	float readLeft;
+	float readRight;
+	float sumLeft = 0;
+	float sumRight = 0;
+
+	const bool leftToggle1Value = (*d1LeftToggle < .5) ? false : true;
+	const bool rightToggle1Value = (*d1RightToggle < .5) ? false : true;
+	const float leftGain1Value = Decibels::decibelsToGain(*d1LeftGain);
+	const float rightGain1Value = Decibels::decibelsToGain(*d1RightGain);
+	const float leftPan1Value = *d1LeftPan;
+	const float rightPan1Value = *d1RightPan;
+	const float leftDelay1Value = *d1LeftDelay;
+	const float rightDelay1Value = *d1RightDelay;
 
     // In case we have more outputs than inputs, this code clears any output
     // channels that didn't contain input data, (because these aren't
@@ -172,8 +191,45 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
     // This is here to avoid people getting screaming feedback
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+	
+    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) buffer.clear (i, 0, bufferSize);
+	d1LeftBuffer.setReadPositionFromMilliseconds(leftDelay1Value);
+	d1RightBuffer.setReadPositionFromMilliseconds(rightDelay1Value);
+	switch (totalNumInputChannels)
+	{
+	case 1:
+		for (auto i = 0; i < bufferSize; ++i)
+		{
+			tempLeft = buffer.getSample(0, i);
+			tempRight = buffer.getSample(0, i);
+			d1LeftBuffer.write(tempLeft);
+			d1RightBuffer.write(tempRight);
+			//readLeft = (leftToggle1Value) ? leftGain1Value * d1LeftBuffer.read() : 0.0f;
+			//readRight = (rightToggle1Value) ? rightGain1Value * d1RightBuffer.read() : 0.0f;
+			//sumLeft = std::cos((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::cos((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
+			//sumRight = std::sin((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::sin((pi / 4) + leftPan1Value * (pi / 4)) * readRight;
+			buffer.addSample(0, i, sumLeft);
+			buffer.addSample(1, i, sumRight);
+		}
+		break;
+	case 2:
+		for (auto i = 0; i < bufferSize; ++i)
+		{
+			tempLeft = buffer.getSample(0, i);
+			tempRight = buffer.getSample(1, i);
+			d1LeftBuffer.write(tempLeft);
+			d1RightBuffer.write(tempRight);
+			//readLeft = (leftToggle1Value) ? leftGain1Value * d1LeftBuffer.read() : 0.0f;
+			//readRight = (rightToggle1Value) ? rightGain1Value * d1RightBuffer.read() : 0.0f;
+			//sumLeft = std::cos((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::cos((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
+			//sumRight = std::sin((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::sin((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
+			buffer.addSample(0, i, sumLeft);
+			buffer.addSample(1, i, sumRight);
+		}
+		break;
+	default:
+		break;
+	}
 
 }
 
