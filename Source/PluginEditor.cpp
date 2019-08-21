@@ -40,8 +40,9 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	//d1 toggle left button
 	addAndMakeVisible(d1LeftToggleButton = new TextButton());
 	d1LeftToggleButton->setBounds(25, 75, 10, 10);
-	d1LeftToggleButton->setClickingTogglesState(false);
+	d1LeftToggleButton->setClickingTogglesState(true);
 	d1LeftToggleButton->setColour(TextButton::buttonOnColourId, Colours::green);
+	d1LeftToggleButton->setColour(TextButton::buttonColourId, Colours::grey);
 	d1LeftToggleButtonAttachment.reset(new ButtonAttachment(valueTreeState, "d1LeftActive", *d1LeftToggleButton));
 
 
@@ -84,8 +85,9 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	//d1 toggle right button
 	addAndMakeVisible(d1RightToggleButton = new TextButton());
 	d1RightToggleButton->setBounds(25, 202, 10, 10);
-	d1RightToggleButton->setClickingTogglesState(false);
+	d1RightToggleButton->setClickingTogglesState(true);
 	d1RightToggleButton->setColour(TextButton::buttonOnColourId, Colours::green);
+	d1RightToggleButton->setColour(TextButton::buttonColourId, Colours::grey);
 	d1RightToggleButtonAttachment.reset(new ButtonAttachment(valueTreeState, "d1RightActive", *d1RightToggleButton));
 
 	//d1 gain right slider

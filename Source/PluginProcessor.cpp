@@ -28,11 +28,11 @@ SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor() :
 #endif
 	parameters(*this, nullptr, Identifier("SimpleDoubler"),
 		{
-			std::make_unique<AudioParameterBool> ("d1LeftActive", "Doubler 1 Left Active", true),
+			std::make_unique<AudioParameterBool> ("d1LeftActive", "Doubler 1 Left Active", false),
 			std::make_unique<AudioParameterFloat> ("d1LeftGain", "Doubler 1 Left Gain", NormalisableRange<float>(-30.0f, 6.0f, 0.1f), -3.0f),
 			std::make_unique<AudioParameterFloat> ("d1LeftPan", "Doubler 1 Left Pan", NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f),
 			std::make_unique<AudioParameterFloat> ("d1LeftDelay", "Doulber 1 Left Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f),
-			std::make_unique<AudioParameterBool>("d1RightActive", "Doubler 1 Right Active", true),
+			std::make_unique<AudioParameterBool>("d1RightActive", "Doubler 1 Right Active", false),
 			std::make_unique<AudioParameterFloat>("d1RightGain", "Doubler 1 Right Gain", NormalisableRange<float>(-30.0f, 6.0f, 0.1f), -3.0f),
 			std::make_unique<AudioParameterFloat>("d1RightPan", "Doubler 1 Right Pan", NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f),
 			std::make_unique<AudioParameterFloat>("d1RightDelay", "Doulber 1 Right Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f)
@@ -143,23 +143,11 @@ void SimpleDoublerAudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool SimpleDoublerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-  #if JucePlugin_IsMidiEffect
-    ignoreUnused (layouts);
-    return true;
-  #else
-    // This is the place where you check if the layout is supported.
-    // In this template code we only support stereo.
-    if (layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
-        return false;
-
-    // This checks if the input layout matches the output layout
-   #if ! JucePlugin_IsSynth
-    if (layouts.getMainOutputChannelSet() != layouts.getMainInputChannelSet())
-        return false;
-   #endif
-
-    return true;
-  #endif
+	// This is the place where you check if the layout is supported.
+	// In this template code we only support mono or stereo.
+	if (layouts.getMainOutputChannelSet() != AudioChannelSet::stereo())
+		return false;
+	else return true;
 }
 #endif
 
@@ -204,10 +192,10 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 			tempRight = buffer.getSample(0, i);
 			d1LeftBuffer.write(tempLeft);
 			d1RightBuffer.write(tempRight);
-			//readLeft = (leftToggle1Value) ? leftGain1Value * d1LeftBuffer.read() : 0.0f;
-			//readRight = (rightToggle1Value) ? rightGain1Value * d1RightBuffer.read() : 0.0f;
-			//sumLeft = std::cos((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::cos((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
-			//sumRight = std::sin((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::sin((pi / 4) + leftPan1Value * (pi / 4)) * readRight;
+			readLeft = (leftToggle1Value) ? leftGain1Value * d1LeftBuffer.read() : 0.0f;
+			readRight = (rightToggle1Value) ? rightGain1Value * d1RightBuffer.read() : 0.0f;
+			sumLeft = std::cos((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::cos((pi / 4) - rightPan1Value * (pi / 4)) * readRight;
+			sumRight = std::sin((pi / 4) + leftPan1Value * (pi / 4)) * readLeft + std::sin((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
 			buffer.addSample(0, i, sumLeft);
 			buffer.addSample(1, i, sumRight);
 		}
@@ -219,10 +207,10 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 			tempRight = buffer.getSample(1, i);
 			d1LeftBuffer.write(tempLeft);
 			d1RightBuffer.write(tempRight);
-			//readLeft = (leftToggle1Value) ? leftGain1Value * d1LeftBuffer.read() : 0.0f;
-			//readRight = (rightToggle1Value) ? rightGain1Value * d1RightBuffer.read() : 0.0f;
-			//sumLeft = std::cos((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::cos((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
-			//sumRight = std::sin((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::sin((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
+			readLeft = (leftToggle1Value) ? leftGain1Value * d1LeftBuffer.read() : 0.0f;
+			readRight = (rightToggle1Value) ? rightGain1Value * d1RightBuffer.read() : 0.0f;
+			sumLeft = std::cos((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::cos((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
+			sumRight = std::sin((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::sin((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
 			buffer.addSample(0, i, sumLeft);
 			buffer.addSample(1, i, sumRight);
 		}

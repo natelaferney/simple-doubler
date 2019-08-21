@@ -2,7 +2,7 @@
 
 <JUCERPROJECT id="aJWDjf" name="SimpleDoubler" projectType="audioplug" jucerVersion="5.4.1"
               pluginFormats="buildStandalone,buildVST3" pluginManufacturer="NateOnTheBeat"
-              aaxIdentifier="com.NateOnTheBeat.SimpleDoubler" pluginChannelConfigs="{1, 2}, {2, 2}">
+              aaxIdentifier="com.NateOnTheBeat.SimpleDoubler">
   <MAINGROUP id="nuUzMZ" name="SimpleDoubler">
     <GROUP id="{46F71159-D09A-AD45-14CA-EF627315F70F}" name="Source">
       <FILE id="h5uFT1" name="CircularBuffer.cpp" compile="1" resource="0"
