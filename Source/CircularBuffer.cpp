@@ -5,8 +5,7 @@ CircularBuffer::CircularBuffer(int sizeOfBuffer)
 	buffer.resize(sizeOfBuffer, 0.0f);
 	bufferSize = sizeOfBuffer;
 	writePosition = 0;
-	offset = 1;
-	readPosition = (writePosition - offset) % bufferSize;
+	readPosition = bufferSize - 1;
 }
 
 CircularBuffer::~CircularBuffer()
@@ -15,11 +14,8 @@ CircularBuffer::~CircularBuffer()
 
 void CircularBuffer::resize(int newSize)
 {
-	buffer.clear();
 	buffer.resize(newSize, 0.0f);
 	bufferSize = newSize;
-	writePosition = 0;
-	readPosition = (writePosition - offset) % bufferSize;
 }
 
 void CircularBuffer::setSampleRate(int newSampleRate)
@@ -29,8 +25,10 @@ void CircularBuffer::setSampleRate(int newSampleRate)
 
 void CircularBuffer::setReadPositionFromMilliseconds(int milliseconds)
 {
-	offset = (int)(((milliseconds / 1000) * sampleRate) + .5);
-	readPosition = (writePosition - offset) % bufferSize;
+	int offset = (int)(((milliseconds / 1000) * sampleRate) + .5);
+	//readPosition = std::abs(writePosition - offset) % bufferSize;
+	int temp = writePosition - offset;
+	readPosition = (temp < 0) ? temp + bufferSize : temp;
 }
 
 float CircularBuffer::read()
@@ -50,8 +48,7 @@ void CircularBuffer::reset()
 {
 	std::fill(buffer.begin(), buffer.end(), 0.0f);
 	writePosition = 0;
-	offset = 1;
-	readPosition = (writePosition - offset) % bufferSize;
+	readPosition = bufferSize - 1;
 }
 
 const int CircularBuffer::getSampleRate()

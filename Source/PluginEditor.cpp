@@ -49,7 +49,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	//d1 gain left slider
 	addAndMakeVisible(d1LeftGainSlider = new Slider());
 	d1LeftGainSlider->setRange(-30.0f, 6.0f, 0.1f);
-	d1LeftGainSlider->setValue(-3.0f);
+	d1LeftGainSlider->setValue(-12.0f);
 	d1LeftGainSlider->setPopupMenuEnabled(false);
 	d1LeftGainSlider->setSliderStyle(Slider::Rotary);
 	d1LeftGainSlider->setRotaryParameters(MathConstants<float>::pi * 1.3f, MathConstants<float>::pi * 2.7f, true);
@@ -93,7 +93,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	//d1 gain right slider
 	addAndMakeVisible(d1RightGainSlider = new Slider());
 	d1RightGainSlider->setRange(-30.0f, 6.0f, 0.1f);
-	d1RightGainSlider->setValue(-3.0f);
+	d1RightGainSlider->setValue(-12.0f);
 	d1RightGainSlider->setPopupMenuEnabled(false);
 	d1RightGainSlider->setSliderStyle(Slider::Rotary);
 	d1RightGainSlider->setRotaryParameters(MathConstants<float>::pi * 1.3f, MathConstants<float>::pi * 2.7f, true);
@@ -125,6 +125,10 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1RightDelaySlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1RightDelaySlider->setTextValueSuffix(" mS");
 	d1RightDelaySliderAttachment.reset(new SliderAttachment(valueTreeState, "d1RightDelay", *d1RightDelaySlider));
+
+	addAndMakeVisible(testLabel = new Label());
+	testLabel->setBounds(420, 250, 80, 50);
+
 }
 
 SimpleDoublerAudioProcessorEditor::~SimpleDoublerAudioProcessorEditor()
@@ -136,6 +140,7 @@ void SimpleDoublerAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+	testLabel->setText(juce::String(processor.getMainBusNumInputChannels()), dontSendNotification);
 }
 
 void SimpleDoublerAudioProcessorEditor::resized()
@@ -146,6 +151,7 @@ void SimpleDoublerAudioProcessorEditor::resized()
 
 void SimpleDoublerAudioProcessorEditor::buttonClicked(Button * button)
 {
+
 
 }
 

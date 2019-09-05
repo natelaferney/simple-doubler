@@ -56,5 +56,6 @@ private:
 	ScopedPointer<Label> delayLabel;
 	ScopedPointer<Label> d1LeftLabel;
 	ScopedPointer<Label> d1RightLabel;
+	ScopedPointer<Label> testLabel;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDoublerAudioProcessorEditor)
 };

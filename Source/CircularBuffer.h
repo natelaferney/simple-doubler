@@ -19,7 +19,6 @@ private:
 	int bufferSize;
 	int readPosition;
 	int writePosition;
-	int offset;
 	int sampleRate;
 	std::vector<float> buffer;
 };

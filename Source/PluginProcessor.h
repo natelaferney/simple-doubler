@@ -59,8 +59,9 @@ public:
 private:
     //==============================================================================
 	AudioProcessorValueTreeState parameters;
-	CircularBuffer d1LeftBuffer;
-	CircularBuffer d1RightBuffer;
+	CircularBuffer d1LeftBuffer0;
+	CircularBuffer d1LeftBuffer1;
+	//CircularBuffer d1RightBuffer;
 	float * d1LeftToggle;
 	float * d1RightToggle;
 	float * d1LeftGain;
