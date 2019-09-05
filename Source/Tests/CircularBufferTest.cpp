@@ -7,16 +7,16 @@ int main()
     CircularBuffer buffer = CircularBuffer(100);
     buffer.reset();
     buffer.setSampleRate(100);
-    buffer.setReadPositionFromMilliseconds(500);
+    buffer.setReadPositionFromMilliseconds(750);
     std::cout << "Sample Rate: " << buffer.getSampleRate() << '\n';
     std::cout << "Buffer Size: " << buffer.getBufferSize() << '\n';
     std::cout << "Read Position: " << buffer.getReadPosition() << '\n';
     
     int dog;
     
-    for (int i = 0; i < 1050; ++i)
+    for (int i = 0; i < 1000; ++i)
     {
-        if (i % 100 == 0) buffer.setReadPositionFromMilliseconds(500);
+        if (i == 900) buffer.setReadPositionFromMilliseconds(500);
         //std::cout << buffer.getReadPosition() << '\n';
         buffer.write(i);
         dog = (int)buffer.read();

@@ -1,3 +1,4 @@
 Builds/
 JuceLibraryCode/
 *.gch
+*.out
