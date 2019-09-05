@@ -16,6 +16,7 @@ int main()
     
     for (int i = 0; i < 1050; ++i)
     {
+        if (i % 100 == 0) buffer.setReadPositionFromMilliseconds(500);
         //std::cout << buffer.getReadPosition() << '\n';
         buffer.write(i);
         dog = (int)buffer.read();

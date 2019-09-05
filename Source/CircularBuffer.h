@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 #include <vector>
 
 class CircularBuffer
@@ -13,6 +13,8 @@ public:
 	void resize(int newSize);
 	const int getSampleRate();
 	const int getBufferSize();
+    int getReadPosition();
+    int getWritePosition();
 	~CircularBuffer();
 
 private:
