@@ -37,7 +37,7 @@ SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor() :
 			std::make_unique<AudioParameterFloat>("d1RightPan", "Doubler 1 Right Pan", NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f),
 			std::make_unique<AudioParameterFloat>("d1RightDelay", "Doulber 1 Right Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f)
 		}),
-	d1LeftBuffer0(44100), d1LeftBuffer1(44100)
+	d1LeftBuffer0(44100), d1LeftBuffer1(44100), d1RightBuffer0(44100), d1RightBuffer1(44100)
 {
 	//parameters
 	d1LeftToggle = parameters.getRawParameterValue("d1LeftActive");
@@ -120,24 +120,34 @@ void SimpleDoublerAudioProcessor::changeProgramName (int index, const String& ne
 void SimpleDoublerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
 	int currentSampleRate = (int)(sampleRate + .5);
-	if (currentSampleRate != d1LeftBuffer0.getSampleRate())
+	if (currentSampleRate != d1LeftBuffer0.getSampleRate() || 
+		currentSampleRate != d1LeftBuffer1.getSampleRate())
 	{
 		d1LeftBuffer0.setSampleRate(currentSampleRate);
 		d1LeftBuffer0.resize(currentSampleRate);
-	}
-	if (currentSampleRate != d1LeftBuffer1.getSampleRate())
-	{
 		d1LeftBuffer1.setSampleRate(currentSampleRate);
 		d1LeftBuffer1.resize(currentSampleRate);
 	}
+	if (currentSampleRate != d1RightBuffer0.getSampleRate() ||
+		currentSampleRate != d1RightBuffer1.getSampleRate())
+	{
+		d1RightBuffer0.setSampleRate(currentSampleRate);
+		d1RightBuffer0.resize(currentSampleRate);
+		d1RightBuffer1.setSampleRate(currentSampleRate);
+		d1RightBuffer1.resize(currentSampleRate);
+	}
 	d1LeftBuffer0.reset();
 	d1LeftBuffer1.reset();
+	d1RightBuffer0.reset();
+	d1RightBuffer1.reset();
 }
 
 void SimpleDoublerAudioProcessor::releaseResources()
 {
 	d1LeftBuffer0.reset();
 	d1LeftBuffer1.reset();
+	d1RightBuffer0.reset();
+	d1RightBuffer1.reset();
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
@@ -157,18 +167,8 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
 	const int bufferSize = buffer.getNumSamples();
-	float tempLeft0;
-	float tempLeft1;
-	float tempRight;
-	float readLeft0;
-	float readLeft1;
-	float readRight;
-	float sumLeft = 0;
-	float sumRight = 0;
 
-	float mSignal;
-	float sSignal;
-
+	//get parameter values
 	const bool leftToggle1Value = (*d1LeftToggle < .5) ? false : true;
 	const bool rightToggle1Value = (*d1RightToggle < .5) ? false : true;
 	const float leftGain1Value = Decibels::decibelsToGain(*d1LeftGain);
@@ -177,39 +177,59 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 	const float rightPan1Value = *d1RightPan / 100;
 	const float leftDelay1Value = *d1LeftDelay;
 	const float rightDelay1Value = *d1RightDelay;
-
-    // In case we have more outputs than inputs, this code clears any output
-    // channels that didn't contain input data, (because these aren't
-    // guaranteed to be empty - they may contain garbage).
-    // This is here to avoid people getting screaming feedback
-    // when they first compile a plugin, but obviously you don't need to keep
-    // this code if your algorithm always overwrites all the output channels.
 	
+	//clear buffer
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) buffer.clear (i, 0, bufferSize);
+
+	//set read position
 	d1LeftBuffer0.setReadPositionFromMilliseconds(leftDelay1Value);
 	d1LeftBuffer1.setReadPositionFromMilliseconds(leftDelay1Value);
+	d1RightBuffer0.setReadPositionFromMilliseconds(rightDelay1Value);
+	d1RightBuffer1.setReadPositionFromMilliseconds(rightDelay1Value);
+
+	//initialize constants
+	float tempLeft;
+	float tempRight;
+	float readLeft0;
+	float readLeft1;
+	float readRight0;
+	float readRight1;
+	float sumLeft;
+	float sumRight;
+
+	//switch statement for mono and stereo configurations
 	switch (totalNumInputChannels)
 	{
 	case 1:
 		for (auto i = 0; i < bufferSize; ++i)
 		{
-			tempLeft0 = buffer.getSample(0, i) / 2;
-			tempLeft1 = tempLeft0;
-			//tempRight = buffer.getSample(0, i);
-			d1LeftBuffer0.write(tempLeft0);
-			d1LeftBuffer1.write(tempLeft1);
+			//read the channels
+			tempLeft = buffer.getSample(0, i) / 2;
+			tempRight = tempLeft;
+			
+			//write to buffer
+			d1LeftBuffer0.write(tempLeft);
+			d1LeftBuffer1.write(tempRight);
+			d1RightBuffer0.write(tempLeft);
+			d1RightBuffer1.write(tempRight);
+
+			//get read values from buffer
 			readLeft0 = d1LeftBuffer0.read();
 			readLeft1 = d1LeftBuffer1.read();
+			readRight0 = d1RightBuffer0.read();
+			readRight1 = d1RightBuffer1.read();
+
+			//apply gain and panning to doubler left 1
 			readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
 			readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
-			//mSignal = .5 * (readLeft0 + readLeft1);
-			//sSignal = readLeft0 - readLeft1;
-			sumLeft += readLeft0;
-			sumRight += readLeft1;
-			//readLeft = (leftToggle1Value) ? leftGain1Value * d1LeftBuffer.read() : 0.0f;
-			//readRight = (rightToggle1Value) ? rightGain1Value * d1RightBuffer.read() : 0.0f;
-			//sumLeft = std::cos((pi / 4) - leftPan1Value * (pi / 4)) * readLeft + std::cos((pi / 4) - rightPan1Value * (pi / 4)) * readRight;
-			//sumRight = std::sin((pi / 4) + leftPan1Value * (pi / 4)) * readLeft + std::sin((pi / 4) + rightPan1Value * (pi / 4)) * readRight;
+			
+			//apply gain and panning doubler right 1
+			readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
+			readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
+
+			//sum the channels and add it to the output
+			sumLeft = readLeft0 + readRight0;
+			sumRight = readLeft1 + readRight1;
 			buffer.addSample(0, i, sumLeft);
 			buffer.addSample(1, i, sumRight);
 		}
@@ -217,17 +237,33 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 	case 2:
 		for (auto i = 0; i < bufferSize; ++i)
 		{
-			tempLeft0 = buffer.getSample(0, i);
-			//tempLeft1 = tempLeft0;
-			tempLeft1 = buffer.getSample(1, i);
-			d1LeftBuffer0.write(tempLeft0);
-			d1LeftBuffer1.write(tempLeft1);
+			//read the channels
+			tempLeft = buffer.getSample(0, i);
+			tempRight = buffer.getSample(1, i);
+
+			//write to buffer
+			d1LeftBuffer0.write(tempLeft);
+			d1LeftBuffer1.write(tempRight);
+			d1RightBuffer0.write(tempLeft);
+			d1RightBuffer1.write(tempRight);
+
+			//get read values from buffer
 			readLeft0 = d1LeftBuffer0.read();
 			readLeft1 = d1LeftBuffer1.read();
+			readRight0 = d1RightBuffer0.read();
+			readRight1 = d1RightBuffer1.read();
+
+			//apply gain and panning to doubler left 1
 			readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
 			readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
-			sumLeft = readLeft0;
-			sumRight = readLeft1;
+
+			//apply gain and panning doubler right 1
+			readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
+			readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
+			
+			//apply gain and panning doubler right 1
+			sumLeft = readLeft0 + readRight0;
+			sumRight = readLeft1 + readRight1;
 			buffer.addSample(0, i, sumLeft);
 			buffer.addSample(1, i, sumRight);
 		}
