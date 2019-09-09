@@ -226,8 +226,8 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 			readLeft1 = d1LeftBuffer1.read();
 			readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
 			readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
-			sumLeft += readLeft0;
-			sumRight += readLeft1;
+			sumLeft = readLeft0;
+			sumRight = readLeft1;
 			buffer.addSample(0, i, sumLeft);
 			buffer.addSample(1, i, sumRight);
 		}
