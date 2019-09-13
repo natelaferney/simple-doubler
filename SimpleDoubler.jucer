@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="aJWDjf" name="SimpleDoubler" projectType="audioplug" jucerVersion="5.4.1"
+<JUCERPROJECT id="aJWDjf" name="SimpleDoubler" projectType="audioplug" jucerVersion="5.4.4"
               pluginFormats="buildStandalone,buildVST3" pluginManufacturer="NateOnTheBeat"
               aaxIdentifier="com.NateOnTheBeat.SimpleDoubler">
   <MAINGROUP id="nuUzMZ" name="SimpleDoubler">

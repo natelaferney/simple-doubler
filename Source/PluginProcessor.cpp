@@ -303,7 +303,7 @@ void SimpleDoublerAudioProcessor::getStateInformation (MemoryBlock& destData)
 
 void SimpleDoublerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-	XmlElement * xmlState = getXmlFromBinary(data, sizeInBytes);
+	std::unique_ptr<XmlElement> xmlState(getXmlFromBinary(data, sizeInBytes));
 	if (xmlState != nullptr)
 	{
 		const float d1LeftToggleValue = (float)xmlState->getDoubleAttribute("d1LeftToggle", 1.0f);
@@ -342,7 +342,6 @@ void SimpleDoublerAudioProcessor::setStateInformation (const void* data, int siz
 		parameters.getParameter("d1LeftDelay")->endChangeGesture();
 		parameters.getParameter("d1RightDelay")->endChangeGesture();
 	}
-	delete xmlState;
 }
 
 //==============================================================================
