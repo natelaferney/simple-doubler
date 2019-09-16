@@ -12,6 +12,7 @@
 
 #include "../JuceLibraryCode/JuceHeader.h"
 #include "PluginProcessor.h"
+#include "LookAndFeel.h"
 
 typedef AudioProcessorValueTreeState::ButtonAttachment ButtonAttachment;
 typedef AudioProcessorValueTreeState::SliderAttachment SliderAttachment;
@@ -57,5 +58,6 @@ private:
 	ScopedPointer<Label> d1LeftLabel;
 	ScopedPointer<Label> d1RightLabel;
 	ScopedPointer<Label> testLabel;
+	SimpleDoublerLookAndFeel lookAndFeel;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDoublerAudioProcessorEditor)
 };

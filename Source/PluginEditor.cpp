@@ -20,6 +20,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
     // editor's size to whatever you need it to be.
     setSize (500, 300);
 
+	setLookAndFeel(&lookAndFeel);
+
 	//labels
 	addAndMakeVisible(gainLabel = new Label());
 	gainLabel->setBounds(80, 10, 50, 20);
@@ -133,6 +135,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 
 SimpleDoublerAudioProcessorEditor::~SimpleDoublerAudioProcessorEditor()
 {
+	setLookAndFeel(nullptr);
 }
 
 //==============================================================================
