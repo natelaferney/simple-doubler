@@ -29,7 +29,7 @@ void SimpleDoublerLookAndFeel::drawRotarySlider(Graphics& g, int x, int y, int w
 
 	// fill
 	//g.setColour(Colours::black);
-	g.setGradientFill(ColourGradient(Colours::darkslategrey, centreX, centreY, Colours::black, rx, ry, true));
+	g.setGradientFill(ColourGradient(Colours::black, centreX, centreY, Colours::darkgoldenrod, rx, ry, true));
 	g.fillEllipse(rx, ry, rw, rw);
 
 	// outline
