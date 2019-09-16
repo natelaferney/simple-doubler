@@ -20,6 +20,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
     // editor's size to whatever you need it to be.
     setSize (500, 300);
 
+	setLookAndFeel(&lookAndFeel);
+
 	//labels
 	addAndMakeVisible(gainLabel = new Label());
 	gainLabel->setBounds(80, 10, 50, 20);
@@ -41,8 +43,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	addAndMakeVisible(d1LeftToggleButton = new TextButton());
 	d1LeftToggleButton->setBounds(25, 75, 10, 10);
 	d1LeftToggleButton->setClickingTogglesState(true);
-	d1LeftToggleButton->setColour(TextButton::buttonOnColourId, Colours::green);
-	d1LeftToggleButton->setColour(TextButton::buttonColourId, Colours::grey);
+	d1LeftToggleButton->setColour(TextButton::buttonOnColourId, Colours::limegreen);
+	d1LeftToggleButton->setColour(TextButton::buttonColourId, Colours::darkslategrey);
 	d1LeftToggleButtonAttachment.reset(new ButtonAttachment(valueTreeState, "d1LeftActive", *d1LeftToggleButton));
 
 
@@ -86,8 +88,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	addAndMakeVisible(d1RightToggleButton = new TextButton());
 	d1RightToggleButton->setBounds(25, 202, 10, 10);
 	d1RightToggleButton->setClickingTogglesState(true);
-	d1RightToggleButton->setColour(TextButton::buttonOnColourId, Colours::green);
-	d1RightToggleButton->setColour(TextButton::buttonColourId, Colours::grey);
+	d1RightToggleButton->setColour(TextButton::buttonOnColourId, Colours::limegreen);
+	d1RightToggleButton->setColour(TextButton::buttonColourId, Colours::darkslategrey);
 	d1RightToggleButtonAttachment.reset(new ButtonAttachment(valueTreeState, "d1RightActive", *d1RightToggleButton));
 
 	//d1 gain right slider
@@ -133,13 +135,17 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 
 SimpleDoublerAudioProcessorEditor::~SimpleDoublerAudioProcessorEditor()
 {
+	setLookAndFeel(nullptr);
 }
 
 //==============================================================================
 void SimpleDoublerAudioProcessorEditor::paint (Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
-    g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+    //g.fillAll (getLookAndFeel().findColour (ResizableWindow::backgroundColourId));
+	ColourGradient gradient = ColourGradient(Colours::slategrey, 250.0f, 150.0f, Colours::darkslategrey, 200.0f, 500.0f, false);
+	g.setGradientFill(gradient);
+	g.fillAll();
 	testLabel->setText(juce::String(processor.getMainBusNumInputChannels()), dontSendNotification);
 }
 
