@@ -58,6 +58,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1LeftGainSlider->setBounds(50, 50, 100, 100);
 	d1LeftGainSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1LeftGainSlider->setTextValueSuffix(" dB");
+	d1LeftGainSlider->setComponentID("d1LeftGainSlider");
+	d1LeftGainSlider->addListener(this);
 	d1LeftGainSliderAttachment.reset(new SliderAttachment(valueTreeState, "d1LeftGain", *d1LeftGainSlider));
 
 	//d1 pan left slider
@@ -70,6 +72,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1LeftPanningSlider->setBounds(175, 50, 100, 100);
 	d1LeftPanningSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1LeftPanningSlider->setTextValueSuffix(" %");
+	d1LeftPanningSlider->setComponentID("d1LeftPanningSlider");
+	d1LeftPanningSlider->addListener(this);
 	d1LeftPanningSliderAttachment.reset(new SliderAttachment(valueTreeState, "d1LeftPan", *d1LeftPanningSlider));
 
 	//d1 delay left slider
@@ -82,6 +86,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1LeftDelaySlider->setBounds(300, 50, 100, 100);
 	d1LeftDelaySlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1LeftDelaySlider->setTextValueSuffix(" mS");
+	d1LeftDelaySlider->setComponentID("d1LeftDelaySlider");
+	d1LeftDelaySlider->addListener(this);
 	d1LeftDelaySliderAttachment.reset(new SliderAttachment(valueTreeState, "d1LeftDelay", *d1LeftDelaySlider));
 
 	//d1 toggle right button
@@ -102,6 +108,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1RightGainSlider->setBounds(52, 175, 100, 100);
 	d1RightGainSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1RightGainSlider->setTextValueSuffix(" dB");
+	d1RightGainSlider->setComponentID("d1RightGainSlider");
+	d1RightGainSlider->addListener(this);
 	d1RightGainSliderAttachment.reset(new SliderAttachment(valueTreeState, "d1RightGain", *d1RightGainSlider));
 
 	//d1 pan right slider
@@ -114,6 +122,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1RightPanningSlider->setBounds(177, 175, 100, 100);
 	d1RightPanningSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1RightPanningSlider->setTextValueSuffix(" %");
+	d1RightPanningSlider->setComponentID("d1RightPanningSlider");
+	d1RightPanningSlider->addListener(this);
 	d1RightPanningSliderAttachment.reset(new SliderAttachment(valueTreeState, "d1RightPan", *d1RightPanningSlider));
 
 	//d1 delay right slider
@@ -126,6 +136,8 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	d1RightDelaySlider->setBounds(302, 175, 100, 100);
 	d1RightDelaySlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
 	d1RightDelaySlider->setTextValueSuffix(" mS");
+	d1RightDelaySlider->setComponentID("d1RightDelaySlider");
+	d1RightDelaySlider->addListener(this);
 	d1RightDelaySliderAttachment.reset(new SliderAttachment(valueTreeState, "d1RightDelay", *d1RightDelaySlider));
 
 	addAndMakeVisible(testLabel = new Label());
