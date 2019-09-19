@@ -71,5 +71,6 @@ private:
 	float * d1RightPan;
 	float * d1LeftDelay;
 	float * d1RightDelay;
+	float * dryGain;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDoublerAudioProcessor)
 };
