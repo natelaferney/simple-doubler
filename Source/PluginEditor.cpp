@@ -18,7 +18,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
-    setSize (500, 300);
+    setSize (600, 300);
 
 	setLookAndFeel(&lookAndFeel);
 
@@ -152,6 +152,18 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	syncButton->setComponentID("syncButton");
 	syncButton->addListener(this);
 
+	//dry gain slider
+	addAndMakeVisible(dryGainSlider = new Slider());
+	dryGainSlider->setRange(-90.0f, 0.0f, 0.1f);
+	dryGainSlider->setValue(0.0f);
+	dryGainSlider->setPopupMenuEnabled(false);
+	dryGainSlider->setRotaryParameters(MathConstants<float>::pi * 1.3f, MathConstants<float>::pi * 2.7f, true);
+	dryGainSlider->setSliderStyle(Slider::Rotary);
+	dryGainSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
+	dryGainSlider->setBounds(500, 150, 100, 100);
+	dryGainSlider->setTextBoxStyle(Slider::TextBoxBelow, false, 60, 20);
+	dryGainSlider->setTextValueSuffix(" dB");
+	dryGainSliderAttachment.reset(new SliderAttachment(valueTreeState, "dryGain", *dryGainSlider));
 }
 
 SimpleDoublerAudioProcessorEditor::~SimpleDoublerAudioProcessorEditor()

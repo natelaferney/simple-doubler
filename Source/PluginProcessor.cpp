@@ -35,7 +35,8 @@ SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor() :
 			std::make_unique<AudioParameterBool>("d1RightActive", "Doubler 1 Right Active", false),
 			std::make_unique<AudioParameterFloat>("d1RightGain", "Doubler 1 Right Gain", NormalisableRange<float>(-30.0f, 6.0f, 0.1f), -12.0f),
 			std::make_unique<AudioParameterFloat>("d1RightPan", "Doubler 1 Right Pan", NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f),
-			std::make_unique<AudioParameterFloat>("d1RightDelay", "Doulber 1 Right Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f)
+			std::make_unique<AudioParameterFloat>("d1RightDelay", "Doulber 1 Right Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f),
+			std::make_unique<AudioParameterFloat>("dryGain", "Dry Gain", NormalisableRange<float>(-90.0f, 0.0f, 0.1f), 0.0f)
 		}),
 	d1LeftBuffer0(44100), d1LeftBuffer1(44100), d1RightBuffer0(44100), d1RightBuffer1(44100)
 {
@@ -48,6 +49,7 @@ SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor() :
 	d1RightPan = parameters.getRawParameterValue("d1RightPan");
 	d1LeftDelay = parameters.getRawParameterValue("d1LeftDelay");
 	d1RightDelay = parameters.getRawParameterValue("d1RightDelay");
+	dryGain = parameters.getRawParameterValue("dryGain");
 }
 
 SimpleDoublerAudioProcessor::~SimpleDoublerAudioProcessor()
@@ -177,6 +179,7 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 	const float rightPan1Value = *d1RightPan / 100;
 	const float leftDelay1Value = *d1LeftDelay;
 	const float rightDelay1Value = *d1RightDelay;
+	const float dryGainValue = Decibels::decibelsToGain(*dryGain);
 	
 	//clear buffer
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) buffer.clear (i, 0, bufferSize);
@@ -198,80 +201,47 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 	float sumRight;
 
 	//switch statement for mono and stereo configurations
-	switch (totalNumInputChannels)
+	for (int i = 0; i < bufferSize; ++i)
 	{
-	case 1:
-		for (auto i = 0; i < bufferSize; ++i)
+		switch (totalNumInputChannels)
 		{
+		case 1:
 			//read the channels
-			tempLeft = buffer.getSample(0, i) / 2;
+			tempLeft = buffer.getSample(0, i) / 2.0f;
 			tempRight = tempLeft;
-			
-			//write to buffer
-			d1LeftBuffer0.write(tempLeft);
-			d1LeftBuffer1.write(tempRight);
-			d1RightBuffer0.write(tempLeft);
-			d1RightBuffer1.write(tempRight);
-
-			//get read values from buffer
-			readLeft0 = d1LeftBuffer0.read();
-			readLeft1 = d1LeftBuffer1.read();
-			readRight0 = d1RightBuffer0.read();
-			readRight1 = d1RightBuffer1.read();
-
-			//apply gain and panning to doubler left 1
-			readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
-			readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
-			
-			//apply gain and panning doubler right 1
-			readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
-			readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
-
-			//sum the channels and add it to the output
-			sumLeft = readLeft0 + readRight0;
-			sumRight = readLeft1 + readRight1;
-			buffer.addSample(0, i, sumLeft);
-			buffer.addSample(1, i, sumRight);
-		}
-		break;
-	case 2:
-		for (auto i = 0; i < bufferSize; ++i)
-		{
+			break;
+		default:
 			//read the channels
 			tempLeft = buffer.getSample(0, i);
 			tempRight = buffer.getSample(1, i);
-
-			//write to buffer
-			d1LeftBuffer0.write(tempLeft);
-			d1LeftBuffer1.write(tempRight);
-			d1RightBuffer0.write(tempLeft);
-			d1RightBuffer1.write(tempRight);
-
-			//get read values from buffer
-			readLeft0 = d1LeftBuffer0.read();
-			readLeft1 = d1LeftBuffer1.read();
-			readRight0 = d1RightBuffer0.read();
-			readRight1 = d1RightBuffer1.read();
-
-			//apply gain and panning to doubler left 1
-			readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
-			readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
-
-			//apply gain and panning doubler right 1
-			readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
-			readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
-			
-			//apply gain and panning doubler right 1
-			sumLeft = readLeft0 + readRight0;
-			sumRight = readLeft1 + readRight1;
-			buffer.addSample(0, i, sumLeft);
-			buffer.addSample(1, i, sumRight);
+			break;
 		}
-		break;
-	default:
-		break;
-	}
+		//write to buffer
+		d1LeftBuffer0.write(tempLeft);
+		d1LeftBuffer1.write(tempRight);
+		d1RightBuffer0.write(tempLeft);
+		d1RightBuffer1.write(tempRight);
 
+		//get read values from buffer
+		readLeft0 = d1LeftBuffer0.read();
+		readLeft1 = d1LeftBuffer1.read();
+		readRight0 = d1RightBuffer0.read();
+		readRight1 = d1RightBuffer1.read();
+
+		//apply gain and panning to doubler left 1
+		readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
+		readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
+
+		//apply gain and panning doubler right 1
+		readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
+		readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
+
+		//apply gain and panning doubler right 1
+		sumLeft = readLeft0 + readRight0 + (dryGainValue * tempLeft);
+		sumRight = readLeft1 + readRight1 + (dryGainValue * tempRight);
+		buffer.setSample(0, i, sumLeft);
+		buffer.setSample(1, i, sumRight);
+	}
 }
 
 //==============================================================================
@@ -297,6 +267,7 @@ void SimpleDoublerAudioProcessor::getStateInformation (MemoryBlock& destData)
 	xml->setAttribute(Identifier("d1RightPan"), (double)parameters.getParameter("d1RightPan")->convertTo0to1(*d1RightPan));
 	xml->setAttribute(Identifier("d1LeftDelay"), (double)parameters.getParameter("d1LeftDelay")->convertTo0to1(*d1LeftDelay));
 	xml->setAttribute(Identifier("d1RightDelay"), (double)parameters.getParameter("d1RightDelay")->convertTo0to1(*d1RightDelay));
+	xml->setAttribute(Identifier("dryGain"), (double)parameters.getParameter("dryGain")->convertTo0to1(*dryGain));
 	copyXmlToBinary(*xml, destData);
 	delete xml;
 }
@@ -314,6 +285,7 @@ void SimpleDoublerAudioProcessor::setStateInformation (const void* data, int siz
 		const float d1RightPanValue = (float)xmlState->getDoubleAttribute("d1RightPan", 0.0f);
 		const float d1LeftDelayValue = (float)xmlState->getDoubleAttribute("d1LeftDelay", 0.0f);
 		const float d1RightDelayValue = (float)xmlState->getDoubleAttribute("d1RightDelay", 0.0f);
+		const float dryGainValue = (float)xmlState->getDoubleAttribute("dryGain", 1.0f);
 
 		parameters.getParameter("d1LeftActive")->beginChangeGesture();
 		parameters.getParameter("d1RightActive")->beginChangeGesture();
@@ -323,6 +295,7 @@ void SimpleDoublerAudioProcessor::setStateInformation (const void* data, int siz
 		parameters.getParameter("d1RightPan")->beginChangeGesture();
 		parameters.getParameter("d1LeftDelay")->beginChangeGesture();
 		parameters.getParameter("d1RightDelay")->beginChangeGesture();
+		parameters.getParameter("dryGain")->beginChangeGesture();
 
 		parameters.getParameter("d1LeftActive")->setValueNotifyingHost(d1LeftToggleValue);
 		parameters.getParameter("d1RightActive")->setValueNotifyingHost(d1RightToggleValue);
@@ -332,6 +305,7 @@ void SimpleDoublerAudioProcessor::setStateInformation (const void* data, int siz
 		parameters.getParameter("d1RightPan")->setValueNotifyingHost(d1RightPanValue);
 		parameters.getParameter("d1LeftDelay")->setValueNotifyingHost(d1LeftDelayValue);
 		parameters.getParameter("d1RightDelay")->setValueNotifyingHost(d1RightDelayValue);
+		parameters.getParameter("dryGain")->setValueNotifyingHost(dryGainValue);
 
 		parameters.getParameter("d1LeftActive")->endChangeGesture();
 		parameters.getParameter("d1RightActive")->endChangeGesture();
@@ -341,6 +315,7 @@ void SimpleDoublerAudioProcessor::setStateInformation (const void* data, int siz
 		parameters.getParameter("d1RightPan")->endChangeGesture();
 		parameters.getParameter("d1LeftDelay")->endChangeGesture();
 		parameters.getParameter("d1RightDelay")->endChangeGesture();
+		parameters.getParameter("dryGain")->endChangeGesture();
 	}
 }
 
