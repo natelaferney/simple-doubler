@@ -177,6 +177,7 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 	const float rightPan1Value = *d1RightPan / 100;
 	const float leftDelay1Value = *d1LeftDelay;
 	const float rightDelay1Value = *d1RightDelay;
+	const float dryGain = 1.0f;
 	
 	//clear buffer
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i) buffer.clear (i, 0, bufferSize);
@@ -198,80 +199,47 @@ void SimpleDoublerAudioProcessor::processBlock (AudioBuffer<float>& buffer, Midi
 	float sumRight;
 
 	//switch statement for mono and stereo configurations
-	switch (totalNumInputChannels)
+	for (int i = 0; i < bufferSize; ++i)
 	{
-	case 1:
-		for (auto i = 0; i < bufferSize; ++i)
+		switch (totalNumInputChannels)
 		{
+		case 1:
 			//read the channels
-			tempLeft = buffer.getSample(0, i) / 2;
+			tempLeft = buffer.getSample(0, i) / 2.0f;
 			tempRight = tempLeft;
-			
-			//write to buffer
-			d1LeftBuffer0.write(tempLeft);
-			d1LeftBuffer1.write(tempRight);
-			d1RightBuffer0.write(tempLeft);
-			d1RightBuffer1.write(tempRight);
-
-			//get read values from buffer
-			readLeft0 = d1LeftBuffer0.read();
-			readLeft1 = d1LeftBuffer1.read();
-			readRight0 = d1RightBuffer0.read();
-			readRight1 = d1RightBuffer1.read();
-
-			//apply gain and panning to doubler left 1
-			readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
-			readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
-			
-			//apply gain and panning doubler right 1
-			readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
-			readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
-
-			//sum the channels and add it to the output
-			sumLeft = readLeft0 + readRight0;
-			sumRight = readLeft1 + readRight1;
-			buffer.addSample(0, i, sumLeft);
-			buffer.addSample(1, i, sumRight);
-		}
-		break;
-	case 2:
-		for (auto i = 0; i < bufferSize; ++i)
-		{
+			break;
+		default:
 			//read the channels
 			tempLeft = buffer.getSample(0, i);
 			tempRight = buffer.getSample(1, i);
-
-			//write to buffer
-			d1LeftBuffer0.write(tempLeft);
-			d1LeftBuffer1.write(tempRight);
-			d1RightBuffer0.write(tempLeft);
-			d1RightBuffer1.write(tempRight);
-
-			//get read values from buffer
-			readLeft0 = d1LeftBuffer0.read();
-			readLeft1 = d1LeftBuffer1.read();
-			readRight0 = d1RightBuffer0.read();
-			readRight1 = d1RightBuffer1.read();
-
-			//apply gain and panning to doubler left 1
-			readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
-			readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
-
-			//apply gain and panning doubler right 1
-			readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
-			readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
-			
-			//apply gain and panning doubler right 1
-			sumLeft = readLeft0 + readRight0;
-			sumRight = readLeft1 + readRight1;
-			buffer.addSample(0, i, sumLeft);
-			buffer.addSample(1, i, sumRight);
+			break;
 		}
-		break;
-	default:
-		break;
-	}
+		//write to buffer
+		d1LeftBuffer0.write(tempLeft);
+		d1LeftBuffer1.write(tempRight);
+		d1RightBuffer0.write(tempLeft);
+		d1RightBuffer1.write(tempRight);
 
+		//get read values from buffer
+		readLeft0 = d1LeftBuffer0.read();
+		readLeft1 = d1LeftBuffer1.read();
+		readRight0 = d1RightBuffer0.read();
+		readRight1 = d1RightBuffer1.read();
+
+		//apply gain and panning to doubler left 1
+		readLeft0 *= (leftToggle1Value) ? leftGain1Value : 0.0f;
+		readLeft1 *= (leftToggle1Value) ? (1 - leftPan1Value) * leftGain1Value : 0.0f;
+
+		//apply gain and panning doubler right 1
+		readRight0 *= (rightToggle1Value) ? (1 - rightPan1Value) * rightGain1Value : 0.0f;
+		readRight1 *= (rightToggle1Value) ? rightGain1Value : 0.0f;
+
+		//apply gain and panning doubler right 1
+		sumLeft = readLeft0 + readRight0 + (dryGain * tempLeft);
+		sumRight = readLeft1 + readRight1 + (dryGain * tempRight);
+		buffer.setSample(0, i, sumLeft);
+		buffer.setSample(1, i, sumRight);
+	}
 }
 
 //==============================================================================

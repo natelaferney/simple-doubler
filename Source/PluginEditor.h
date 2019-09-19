@@ -52,6 +52,8 @@ private:
 	ScopedPointer<SliderAttachment> d1LeftDelaySliderAttachment;
 	ScopedPointer<Slider> d1RightDelaySlider;
 	ScopedPointer<SliderAttachment> d1RightDelaySliderAttachment;
+	ScopedPointer<Slider> dryGainSlider;
+	ScopedPointer<SliderAttachment> dryGainSliderAttachment;
 	ScopedPointer<Label> gainLabel;
 	ScopedPointer<Label> panLabel;
 	ScopedPointer<Label> delayLabel;
