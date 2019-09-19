@@ -146,9 +146,9 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	//sync button
 	addAndMakeVisible(syncButton = new TextButton("SYNC"));
 	syncButton->setBounds(10, 260, 40, 20);
-	syncButton->setClickingTogglesState(true);
-	syncButton->setColour(TextButton::buttonOnColourId, Colours::darkgoldenrod);
-	syncButton->setColour(TextButton::buttonColourId, Colours::darkblue);
+	//syncButton->setClickingTogglesState(true);
+	syncButton->setColour(TextButton::buttonColourId, Colours::darkgoldenrod);
+	//syncButton->setColour(TextButton::buttonColourId, Colours::darkblue);
 	syncButton->setComponentID("syncButton");
 	syncButton->addListener(this);
 
@@ -178,7 +178,7 @@ void SimpleDoublerAudioProcessorEditor::resized()
 
 void SimpleDoublerAudioProcessorEditor::buttonClicked(Button * button)
 {
-	if (button->getComponentID() == "syncButton" && button->getToggleState())
+	if (button->getComponentID() == "syncButton")
 	{
 		d1RightPanningSlider->setValue(d1LeftPanningSlider->getValue());
 		d1RightGainSlider->setValue(d1LeftGainSlider->getValue());
