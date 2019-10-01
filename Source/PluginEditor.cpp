@@ -78,7 +78,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 
 	//d1 delay left slider
 	addAndMakeVisible(d1LeftDelaySlider = new Slider());
-	d1LeftDelaySlider->setRange(0.0f, 999.0f, 1.0f);
+	d1LeftDelaySlider->setRange(0.0f, 200.0f, 1.0f);
 	d1LeftDelaySlider->setValue(0.0f);
 	d1LeftDelaySlider->setPopupMenuEnabled(false);
 	d1LeftDelaySlider->setSliderStyle(Slider::Rotary);
@@ -128,7 +128,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 
 	//d1 delay right slider
 	addAndMakeVisible(d1RightDelaySlider = new Slider());
-	d1RightDelaySlider->setRange(0.0f, 999.0f, 1.0f);
+	d1RightDelaySlider->setRange(0.0f, 200.0f, 1.0f);
 	d1RightDelaySlider->setValue(0.0f);
 	d1RightDelaySlider->setPopupMenuEnabled(false);
 	d1RightDelaySlider->setSliderStyle(Slider::Rotary);
