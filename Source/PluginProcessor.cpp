@@ -31,11 +31,11 @@ SimpleDoublerAudioProcessor::SimpleDoublerAudioProcessor() :
 			std::make_unique<AudioParameterBool> ("d1LeftActive", "Doubler 1 Left Active", false),
 			std::make_unique<AudioParameterFloat> ("d1LeftGain", "Doubler 1 Left Gain", NormalisableRange<float>(-30.0f, 6.0f, 0.1f), -12.0f),
 			std::make_unique<AudioParameterFloat> ("d1LeftPan", "Doubler 1 Left Pan", NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f),
-			std::make_unique<AudioParameterFloat> ("d1LeftDelay", "Doulber 1 Left Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f),
+			std::make_unique<AudioParameterFloat> ("d1LeftDelay", "Doulber 1 Left Delay", NormalisableRange<float>(0.0f, 200.0f, 1.0f), 0.0f),
 			std::make_unique<AudioParameterBool>("d1RightActive", "Doubler 1 Right Active", false),
 			std::make_unique<AudioParameterFloat>("d1RightGain", "Doubler 1 Right Gain", NormalisableRange<float>(-30.0f, 6.0f, 0.1f), -12.0f),
 			std::make_unique<AudioParameterFloat>("d1RightPan", "Doubler 1 Right Pan", NormalisableRange<float>(0.0f, 100.0f, 1.0f), 0.0f),
-			std::make_unique<AudioParameterFloat>("d1RightDelay", "Doulber 1 Right Delay", NormalisableRange<float>(0.0f, 999.0f, 1.0f), 0.0f),
+			std::make_unique<AudioParameterFloat>("d1RightDelay", "Doulber 1 Right Delay", NormalisableRange<float>(0.0f, 200.0f, 1.0f), 0.0f),
 			std::make_unique<AudioParameterFloat>("dryGain", "Dry Gain", NormalisableRange<float>(-90.0f, 0.0f, 0.1f), 0.0f)
 		}),
 	d1LeftBuffer0(44100), d1LeftBuffer1(44100), d1RightBuffer0(44100), d1RightBuffer1(44100)
