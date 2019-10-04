@@ -60,6 +60,7 @@ private:
 	ScopedPointer<Label> d1LeftLabel;
 	ScopedPointer<Label> d1RightLabel;
 	ScopedPointer<Label> testLabel;
+	ScopedPointer<Label> dryGainSliderLabel;
 	SimpleDoublerLookAndFeel lookAndFeel;
 	ScopedPointer<TextButton> syncButton;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (SimpleDoublerAudioProcessorEditor)

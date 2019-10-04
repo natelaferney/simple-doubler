@@ -38,6 +38,9 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 	addAndMakeVisible(d1RightLabel = new Label());
 	d1RightLabel->setBounds(400, 209, 100, 20);
 	d1RightLabel->setText("Right", dontSendNotification);
+	addAndMakeVisible(dryGainSliderLabel = new Label());
+	dryGainSliderLabel->setBounds(515, 110, 100, 20);
+	dryGainSliderLabel->setText("Dry Gain", dontSendNotification);
 
 	//d1 toggle left button
 	addAndMakeVisible(d1LeftToggleButton = new TextButton());
