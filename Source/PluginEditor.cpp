@@ -154,7 +154,7 @@ SimpleDoublerAudioProcessorEditor::SimpleDoublerAudioProcessorEditor (SimpleDoub
 
 	//dry gain slider
 	addAndMakeVisible(dryGainSlider = new Slider());
-	dryGainSlider->setRange(-90.0f, 0.0f, 0.1f);
+	dryGainSlider->setRange(-120.0f, 0.0f, 0.1f);
 	dryGainSlider->setValue(0.0f);
 	dryGainSlider->setPopupMenuEnabled(false);
 	dryGainSlider->setRotaryParameters(MathConstants<float>::pi * 1.3f, MathConstants<float>::pi * 2.7f, true);
